@@ -4,6 +4,7 @@ public enum ContactOrderBy
 {
     FirstName,
     LastName,
+    Phone,
     Email
 }
 
@@ -22,50 +23,58 @@ public class ContactComparer : IComparer<Contact>
         if (x is null) return -1;
         if (y is null) return 1;
 
-        string xPrimary;
-        string yPrimary;
-        string xSecondary;
-        string ySecondary;
-        string xTertiary;
-        string yTertiary;
+        int cmp = 0;
 
         switch (_orderBy)
         {
             case ContactOrderBy.FirstName:
-                xPrimary   = x.GetFirstName();
-                yPrimary   = y.GetFirstName();
-                xSecondary = x.GetLastName();
-                ySecondary = y.GetLastName();
-                xTertiary  = x.GetEmail();
-                yTertiary  = y.GetEmail();
-                break;
+                cmp = string.Compare(x.GetFirstName(), y.GetFirstName(), StringComparison.OrdinalIgnoreCase);
+                if (cmp != 0) return cmp;
+                
+                cmp = string.Compare(x.GetLastName(), y.GetLastName(), StringComparison.OrdinalIgnoreCase);
+                if (cmp != 0) return cmp;
+                
+                cmp = string.Compare(x.GetPhone(), y.GetPhone(), StringComparison.OrdinalIgnoreCase);
+                if (cmp != 0) return cmp;
+                
+                return string.Compare(x.GetEmail(), y.GetEmail(), StringComparison.OrdinalIgnoreCase);
 
             case ContactOrderBy.LastName:
-                xPrimary   = x.GetLastName();
-                yPrimary   = y.GetLastName();
-                xSecondary = x.GetFirstName();
-                ySecondary = y.GetFirstName();
-                xTertiary  = x.GetEmail();
-                yTertiary  = y.GetEmail();
-                break;
+                cmp = string.Compare(x.GetLastName(), y.GetLastName(), StringComparison.OrdinalIgnoreCase);
+                if (cmp != 0) return cmp;
+                
+                cmp = string.Compare(x.GetFirstName(), y.GetFirstName(), StringComparison.OrdinalIgnoreCase);
+                if (cmp != 0) return cmp;
+                
+                cmp = string.Compare(x.GetPhone(), y.GetPhone(), StringComparison.OrdinalIgnoreCase);
+                if (cmp != 0) return cmp;
+                
+                return string.Compare(x.GetEmail(), y.GetEmail(), StringComparison.OrdinalIgnoreCase);
+
+            case ContactOrderBy.Phone:
+                cmp = string.Compare(x.GetPhone(), y.GetPhone(), StringComparison.OrdinalIgnoreCase);
+                if (cmp != 0) return cmp;
+                
+                cmp = string.Compare(x.GetFirstName(), y.GetFirstName(), StringComparison.OrdinalIgnoreCase);
+                if (cmp != 0) return cmp;
+                
+                cmp = string.Compare(x.GetLastName(), y.GetLastName(), StringComparison.OrdinalIgnoreCase);
+                if (cmp != 0) return cmp;
+                
+                return string.Compare(x.GetEmail(), y.GetEmail(), StringComparison.OrdinalIgnoreCase);
 
             case ContactOrderBy.Email:
             default:
-                xPrimary   = x.GetEmail();
-                yPrimary   = y.GetEmail();
-                xSecondary = x.GetFirstName();
-                ySecondary = y.GetFirstName();
-                xTertiary  = x.GetLastName();
-                yTertiary  = y.GetLastName();
-                break;
+                cmp = string.Compare(x.GetEmail(), y.GetEmail(), StringComparison.OrdinalIgnoreCase);
+                if (cmp != 0) return cmp;
+                
+                cmp = string.Compare(x.GetFirstName(), y.GetFirstName(), StringComparison.OrdinalIgnoreCase);
+                if (cmp != 0) return cmp;
+                
+                cmp = string.Compare(x.GetLastName(), y.GetLastName(), StringComparison.OrdinalIgnoreCase);
+                if (cmp != 0) return cmp;
+                
+                return string.Compare(x.GetPhone(), y.GetPhone(), StringComparison.OrdinalIgnoreCase);
         }
-
-        int cmp = string.Compare(xPrimary, yPrimary, StringComparison.OrdinalIgnoreCase);
-        if (cmp != 0) return cmp;
-
-        cmp = string.Compare(xSecondary, ySecondary, StringComparison.OrdinalIgnoreCase);
-        if (cmp != 0) return cmp;
-
-        return string.Compare(xTertiary, yTertiary, StringComparison.OrdinalIgnoreCase);
     }
 }

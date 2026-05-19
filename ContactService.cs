@@ -46,27 +46,45 @@ public class ContactService
             var c = list[i];
 
             string email = (c.GetEmail() ?? string.Empty).Trim();
-            string key;
+            string phone = (c.GetPhone() ?? string.Empty).Trim();
+            string first = (c.GetFirstName() ?? string.Empty).Trim();
+            string last = (c.GetLastName() ?? string.Empty).Trim();
 
+            // Check for email duplicates
             if (!string.IsNullOrEmpty(email))
             {
-                key = "email:" + email;
-            }
-            else
-            {
-                string first = (c.GetFirstName() ?? string.Empty).Trim();
-                string last  = (c.GetLastName() ?? string.Empty).Trim();
-                string phone = (c.GetPhone() ?? string.Empty).Trim();
-                key = $"namephone:{first}|{last}|{phone}";
-            }
-
-            if (!indexByKey.TryGetValue(key, out var indicesForKey))
-            {
-                indicesForKey = new List<int>();
-                indexByKey[key] = indicesForKey;
+                string key = "email:" + email;
+                if (!indexByKey.TryGetValue(key, out var indicesForKey))
+                {
+                    indicesForKey = new List<int>();
+                    indexByKey[key] = indicesForKey;
+                }
+                indicesForKey.Add(i);
             }
 
-            indicesForKey.Add(i);
+            // Check for phone duplicates
+            if (!string.IsNullOrEmpty(phone))
+            {
+                string key = "phone:" + phone;
+                if (!indexByKey.TryGetValue(key, out var indicesForKey))
+                {
+                    indicesForKey = new List<int>();
+                    indexByKey[key] = indicesForKey;
+                }
+                indicesForKey.Add(i);
+            }
+
+            // Check for name pair duplicates (first + last both non-empty)
+            if (!string.IsNullOrEmpty(first) && !string.IsNullOrEmpty(last))
+            {
+                string key = "namepair:" + first + "|" + last;
+                if (!indexByKey.TryGetValue(key, out var indicesForKey))
+                {
+                    indicesForKey = new List<int>();
+                    indexByKey[key] = indicesForKey;
+                }
+                indicesForKey.Add(i);
+            }
         }
 
         foreach (var kvp in indexByKey)
